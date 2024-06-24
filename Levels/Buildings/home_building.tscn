@@ -1,0 +1,20 @@
+[gd_scene load_steps=4 format=4 uid="uid://brljoi7kwgala"]
+
+[ext_resource type="TileSet" uid="uid://cxkhxrii0kl41" path="res://Resources/Tilesets/base_tileset.tres" id="1_oii23"]
+[ext_resource type="Script" path="res://Levels/Buildings/building.gd" id="1_otvkp"]
+[ext_resource type="Texture2D" uid="uid://bpmvgpev84ywe" path="res://Assets/Images/town_tilemap_packed.png" id="3_hmvnu"]
+
+[node name="HomeBuilding" type="Node2D" node_paths=PackedStringArray("door_sprite")]
+script = ExtResource("1_otvkp")
+door_sprite = NodePath("DoorSprite")
+
+[node name="TileMapLayer" type="TileMapLayer" parent="."]
+position = Vector2(-8, -8)
+tile_map_data = PackedByteArray("AAD/////AgAAAAQAAAD//wAAAgAAAAUAAAD//wEAAgAAAAYAAAAAAP//AgADAAQAAAAAAAAAAgABAAUAAAABAP//AgACAAQAAAABAAAAAgACAAUAAAABAAEAAgADAAYAAAAAAAEAAgACAAYAAAA=")
+tile_set = ExtResource("1_oii23")
+
+[node name="DoorSprite" type="Sprite2D" parent="."]
+position = Vector2(0, 16)
+texture = ExtResource("3_hmvnu")
+region_enabled = true
+region_rect = Rect2(16, 112, 16, 16)

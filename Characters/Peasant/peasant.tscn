@@ -1,0 +1,191 @@
+[gd_scene load_steps=25 format=3 uid="uid://gagx02lcosyh"]
+
+[ext_resource type="Script" path="res://Characters/Peasant/peasant.gd" id="1_1gpu1"]
+[ext_resource type="Texture2D" uid="uid://02xcf33r1j1d" path="res://Assets/Images/dungeon_tilemap_packed.png" id="1_erhi1"]
+[ext_resource type="Texture2D" uid="uid://csjb7lfrelkdh" path="res://Assets/Images/Emotes/thought.png" id="2_5sij0"]
+[ext_resource type="Texture2D" uid="uid://diqvi02ohe4b1" path="res://Assets/Images/Emotes/speech.png" id="3_8ky2e"]
+[ext_resource type="Script" path="res://addons/beehave/nodes/beehave_tree.gd" id="3_10dta"]
+[ext_resource type="Script" path="res://addons/beehave/nodes/composites/selector.gd" id="4_j1v62"]
+[ext_resource type="Texture2D" uid="uid://bbn4fml3dqx1" path="res://Assets/Images/Emotes/emote_sleeps.png" id="4_yrsbj"]
+[ext_resource type="Script" path="res://addons/beehave/nodes/composites/sequence.gd" id="5_8yqqa"]
+[ext_resource type="Script" path="res://addons/beehave/nodes/decorators/inverter.gd" id="6_dopf4"]
+[ext_resource type="Script" path="res://addons/beehave/nodes/composites/sequence_reactive.gd" id="8_b63eu"]
+[ext_resource type="Script" path="res://Characters/Peasant/actions/leave_building_action.gd" id="9_k1c5w"]
+[ext_resource type="Script" path="res://Characters/Peasant/actions/walk_to_building_action.gd" id="10_2d1vg"]
+[ext_resource type="Script" path="res://Characters/Peasant/conditions/is_day_condition.gd" id="10_bf4i6"]
+[ext_resource type="Script" path="res://Characters/Peasant/actions/enter_building_action.gd" id="11_i61wp"]
+[ext_resource type="Script" path="res://Characters/Peasant/actions/sleep_action.gd" id="12_jq1pq"]
+[ext_resource type="Script" path="res://Characters/Peasant/conditions/is_at_home_condition.gd" id="12_o1b5y"]
+[ext_resource type="Script" path="res://Characters/Peasant/conditions/is_in_building_condition.gd" id="13_psgen"]
+[ext_resource type="Script" path="res://Characters/Peasant/conditions/is_at_work_condition.gd" id="18_1qb4c"]
+[ext_resource type="Script" path="res://Characters/Peasant/conditions/is_hungry.gd" id="18_gofef"]
+[ext_resource type="Script" path="res://Characters/Peasant/actions/work_action.gd" id="19_j1pc2"]
+[ext_resource type="Script" path="res://Characters/Peasant/conditions/is_satiated.gd" id="21_oi7s7"]
+[ext_resource type="Script" path="res://Characters/Peasant/actions/walk_to_food_action.gd" id="22_6x684"]
+[ext_resource type="Script" path="res://Characters/Peasant/actions/eat_action.gd" id="22_ar43v"]
+
+[sub_resource type="CircleShape2D" id="CircleShape2D_rtuqd"]
+radius = 8.06226
+
+[node name="Peasant" type="Area2D"]
+script = ExtResource("1_1gpu1")
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="."]
+shape = SubResource("CircleShape2D_rtuqd")
+
+[node name="Node2D" type="Node2D" parent="."]
+visible = false
+position = Vector2(0, -19)
+
+[node name="Baloon" type="Sprite2D" parent="Node2D"]
+texture = ExtResource("2_5sij0")
+
+[node name="Thought" type="Sprite2D" parent="Node2D"]
+texture = ExtResource("3_8ky2e")
+
+[node name="Emote" type="Sprite2D" parent="Node2D"]
+texture = ExtResource("4_yrsbj")
+
+[node name="Sprite2D" type="Sprite2D" parent="."]
+texture = ExtResource("1_erhi1")
+region_enabled = true
+region_rect = Rect2(16, 112, 16, 16)
+
+[node name="Camera2D" type="Camera2D" parent="."]
+zoom = Vector2(2, 2)
+limit_left = 0
+limit_top = 0
+position_smoothing_enabled = true
+
+[node name="BeehaveTree" type="Node" parent="." node_paths=PackedStringArray("blackboard", "actor")]
+script = ExtResource("3_10dta")
+actor_node_path = NodePath("..")
+blackboard = NodePath("@Node@17260")
+actor = NodePath("..")
+
+[node name="ActionSelector" type="Node" parent="BeehaveTree"]
+script = ExtResource("4_j1v62")
+
+[node name="SleepSequence" type="Node" parent="BeehaveTree/ActionSelector"]
+script = ExtResource("8_b63eu")
+
+[node name="IsNightCondition" type="Node" parent="BeehaveTree/ActionSelector/SleepSequence"]
+script = ExtResource("6_dopf4")
+
+[node name="IsDayCondition" type="Node" parent="BeehaveTree/ActionSelector/SleepSequence/IsNightCondition"]
+script = ExtResource("10_bf4i6")
+
+[node name="SleepSelector" type="Node" parent="BeehaveTree/ActionSelector/SleepSequence"]
+script = ExtResource("4_j1v62")
+
+[node name="TravelHomeSequence" type="Node" parent="BeehaveTree/ActionSelector/SleepSequence/SleepSelector"]
+script = ExtResource("5_8yqqa")
+
+[node name="NotAtHome" type="Node" parent="BeehaveTree/ActionSelector/SleepSequence/SleepSelector/TravelHomeSequence"]
+script = ExtResource("6_dopf4")
+
+[node name="IsAtHomeCondition" type="Node" parent="BeehaveTree/ActionSelector/SleepSequence/SleepSelector/TravelHomeSequence/NotAtHome"]
+script = ExtResource("12_o1b5y")
+
+[node name="CommuteSelector" type="Node" parent="BeehaveTree/ActionSelector/SleepSequence/SleepSelector/TravelHomeSequence"]
+script = ExtResource("4_j1v62")
+
+[node name="ExitBuildingSequence" type="Node" parent="BeehaveTree/ActionSelector/SleepSequence/SleepSelector/TravelHomeSequence/CommuteSelector"]
+script = ExtResource("5_8yqqa")
+
+[node name="IsInBuildingCondition" type="Node" parent="BeehaveTree/ActionSelector/SleepSequence/SleepSelector/TravelHomeSequence/CommuteSelector/ExitBuildingSequence"]
+script = ExtResource("13_psgen")
+
+[node name="LeaveBuildingAction" type="Node" parent="BeehaveTree/ActionSelector/SleepSequence/SleepSelector/TravelHomeSequence/CommuteSelector/ExitBuildingSequence"]
+script = ExtResource("9_k1c5w")
+
+[node name="WalkToHomeSequence" type="Node" parent="BeehaveTree/ActionSelector/SleepSequence/SleepSelector/TravelHomeSequence/CommuteSelector"]
+script = ExtResource("5_8yqqa")
+
+[node name="WalkToBuildingAction" type="Node" parent="BeehaveTree/ActionSelector/SleepSequence/SleepSelector/TravelHomeSequence/CommuteSelector/WalkToHomeSequence"]
+script = ExtResource("10_2d1vg")
+
+[node name="EnterBuildingAction" type="Node" parent="BeehaveTree/ActionSelector/SleepSequence/SleepSelector/TravelHomeSequence/CommuteSelector/WalkToHomeSequence"]
+script = ExtResource("11_i61wp")
+
+[node name="SleepAction" type="Node" parent="BeehaveTree/ActionSelector/SleepSequence/SleepSelector"]
+script = ExtResource("12_jq1pq")
+
+[node name="WorkSequence" type="Node" parent="BeehaveTree/ActionSelector"]
+script = ExtResource("8_b63eu")
+
+[node name="IsDayCondition" type="Node" parent="BeehaveTree/ActionSelector/WorkSequence"]
+script = ExtResource("10_bf4i6")
+
+[node name="InverterDecorator" type="Node" parent="BeehaveTree/ActionSelector/WorkSequence"]
+script = ExtResource("6_dopf4")
+
+[node name="IsHungry" type="Node" parent="BeehaveTree/ActionSelector/WorkSequence/InverterDecorator"]
+script = ExtResource("18_gofef")
+
+[node name="WorkSelector" type="Node" parent="BeehaveTree/ActionSelector/WorkSequence"]
+script = ExtResource("4_j1v62")
+
+[node name="TravelToWorkSequence" type="Node" parent="BeehaveTree/ActionSelector/WorkSequence/WorkSelector"]
+script = ExtResource("5_8yqqa")
+
+[node name="NotAtWork" type="Node" parent="BeehaveTree/ActionSelector/WorkSequence/WorkSelector/TravelToWorkSequence"]
+script = ExtResource("6_dopf4")
+
+[node name="IsAtWorkCondition" type="Node" parent="BeehaveTree/ActionSelector/WorkSequence/WorkSelector/TravelToWorkSequence/NotAtWork"]
+script = ExtResource("18_1qb4c")
+
+[node name="CommuteSelector" type="Node" parent="BeehaveTree/ActionSelector/WorkSequence/WorkSelector/TravelToWorkSequence"]
+script = ExtResource("4_j1v62")
+
+[node name="ExitBuildingSequence" type="Node" parent="BeehaveTree/ActionSelector/WorkSequence/WorkSelector/TravelToWorkSequence/CommuteSelector"]
+script = ExtResource("5_8yqqa")
+
+[node name="IsInBuildingCondition" type="Node" parent="BeehaveTree/ActionSelector/WorkSequence/WorkSelector/TravelToWorkSequence/CommuteSelector/ExitBuildingSequence"]
+script = ExtResource("13_psgen")
+
+[node name="LeaveBuildingAction" type="Node" parent="BeehaveTree/ActionSelector/WorkSequence/WorkSelector/TravelToWorkSequence/CommuteSelector/ExitBuildingSequence"]
+script = ExtResource("9_k1c5w")
+
+[node name="WalkToHomeSequence" type="Node" parent="BeehaveTree/ActionSelector/WorkSequence/WorkSelector/TravelToWorkSequence/CommuteSelector"]
+script = ExtResource("5_8yqqa")
+
+[node name="WalkToBuildingAction" type="Node" parent="BeehaveTree/ActionSelector/WorkSequence/WorkSelector/TravelToWorkSequence/CommuteSelector/WalkToHomeSequence"]
+script = ExtResource("10_2d1vg")
+walk_to = 1
+
+[node name="EnterBuildingAction" type="Node" parent="BeehaveTree/ActionSelector/WorkSequence/WorkSelector/TravelToWorkSequence/CommuteSelector/WalkToHomeSequence"]
+script = ExtResource("11_i61wp")
+
+[node name="WorkAction" type="Node" parent="BeehaveTree/ActionSelector/WorkSequence/WorkSelector"]
+script = ExtResource("19_j1pc2")
+
+[node name="EatSequence" type="Node" parent="BeehaveTree/ActionSelector"]
+script = ExtResource("8_b63eu")
+
+[node name="IsDayCondition" type="Node" parent="BeehaveTree/ActionSelector/EatSequence"]
+script = ExtResource("10_bf4i6")
+
+[node name="InverterDecorator" type="Node" parent="BeehaveTree/ActionSelector/EatSequence"]
+script = ExtResource("6_dopf4")
+
+[node name="IsSatiated" type="Node" parent="BeehaveTree/ActionSelector/EatSequence/InverterDecorator"]
+script = ExtResource("21_oi7s7")
+
+[node name="EatSelector" type="Node" parent="BeehaveTree/ActionSelector/EatSequence"]
+script = ExtResource("4_j1v62")
+
+[node name="TravelToFoodSequence" type="Node" parent="BeehaveTree/ActionSelector/EatSequence/EatSelector"]
+script = ExtResource("5_8yqqa")
+
+[node name="IsInBuildingCondition" type="Node" parent="BeehaveTree/ActionSelector/EatSequence/EatSelector/TravelToFoodSequence"]
+script = ExtResource("13_psgen")
+
+[node name="LeaveBuildingAction" type="Node" parent="BeehaveTree/ActionSelector/EatSequence/EatSelector/TravelToFoodSequence"]
+script = ExtResource("9_k1c5w")
+
+[node name="WalkToFoodAction" type="Node" parent="BeehaveTree/ActionSelector/EatSequence/EatSelector/TravelToFoodSequence"]
+script = ExtResource("22_6x684")
+
+[node name="EatAction" type="Node" parent="BeehaveTree/ActionSelector/EatSequence/EatSelector"]
+script = ExtResource("22_ar43v")
