@@ -7,5 +7,6 @@ func tick(actor: Node, blackboard: Blackboard) -> int:
 	if actor.in_range(nearest_food_source.global_position):
 		return SUCCESS
 
-	actor.position = actor.position.move_toward(nearest_food_source.global_position, 5)
+	actor.walk()
+	actor.position = actor.position.move_toward(nearest_food_source.global_position, actor.move_speed)
 	return RUNNING

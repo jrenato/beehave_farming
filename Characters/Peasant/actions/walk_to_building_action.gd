@@ -18,5 +18,6 @@ func tick(actor: Node, blackboard: Blackboard) -> int:
 		return SUCCESS
 
 	#actor.position.x = move_toward(actor.position.x, target_building.position.x, 5)
-	actor.position = actor.position.move_toward(target_building.get_door_location(), 5)
+	actor.position = actor.position.move_toward(target_building.get_door_location(), actor.move_speed)
+	actor.walk()
 	return RUNNING

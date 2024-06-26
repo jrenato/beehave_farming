@@ -172,20 +172,23 @@ script = ExtResource("6_dopf4")
 [node name="IsSatiated" type="Node" parent="BeehaveTree/ActionSelector/EatSequence/InverterDecorator"]
 script = ExtResource("21_oi7s7")
 
-[node name="EatSelector" type="Node" parent="BeehaveTree/ActionSelector/EatSequence"]
-script = ExtResource("4_j1v62")
-
-[node name="TravelToFoodSequence" type="Node" parent="BeehaveTree/ActionSelector/EatSequence/EatSelector"]
+[node name="TravelToFoodSequence" type="Node" parent="BeehaveTree/ActionSelector/EatSequence"]
 script = ExtResource("5_8yqqa")
 
-[node name="IsInBuildingCondition" type="Node" parent="BeehaveTree/ActionSelector/EatSequence/EatSelector/TravelToFoodSequence"]
+[node name="CommuteSelector" type="Node" parent="BeehaveTree/ActionSelector/EatSequence/TravelToFoodSequence"]
+script = ExtResource("4_j1v62")
+
+[node name="ExitBuildingSequence" type="Node" parent="BeehaveTree/ActionSelector/EatSequence/TravelToFoodSequence/CommuteSelector"]
+script = ExtResource("5_8yqqa")
+
+[node name="IsInBuildingCondition" type="Node" parent="BeehaveTree/ActionSelector/EatSequence/TravelToFoodSequence/CommuteSelector/ExitBuildingSequence"]
 script = ExtResource("13_psgen")
 
-[node name="LeaveBuildingAction" type="Node" parent="BeehaveTree/ActionSelector/EatSequence/EatSelector/TravelToFoodSequence"]
+[node name="LeaveBuildingAction" type="Node" parent="BeehaveTree/ActionSelector/EatSequence/TravelToFoodSequence/CommuteSelector/ExitBuildingSequence"]
 script = ExtResource("9_k1c5w")
 
-[node name="WalkToFoodAction" type="Node" parent="BeehaveTree/ActionSelector/EatSequence/EatSelector/TravelToFoodSequence"]
+[node name="WalkToFoodAction" type="Node" parent="BeehaveTree/ActionSelector/EatSequence/TravelToFoodSequence/CommuteSelector"]
 script = ExtResource("22_6x684")
 
-[node name="EatAction" type="Node" parent="BeehaveTree/ActionSelector/EatSequence/EatSelector"]
+[node name="EatAction" type="Node" parent="BeehaveTree/ActionSelector/EatSequence/TravelToFoodSequence"]
 script = ExtResource("22_ar43v")
